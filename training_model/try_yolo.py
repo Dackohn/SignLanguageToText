@@ -61,8 +61,8 @@ def preprocess_image(cropped_frame):
     return image
 
 # Paths
-cfg_path = "D:/ASL_Alphabet_Dataset/Sign_language/SignLanguageToText/cross-hands.cfg"
-weights_path_yolo = "D:/ASL_Alphabet_Dataset/Sign_language/SignLanguageToText/cross-hands.weights"
+cfg_path = "D:/ASL_Alphabet_Dataset/Sign_language/cross-hands.cfg"
+weights_path_yolo = "D:/ASL_Alphabet_Dataset/Sign_language/cross-hands.weights"
 weights_path_asl = "D:/ASL_Alphabet_Dataset/Sign_language/SignLanguageToText/asl_to_text_model_74.pth"
 
 # Class labels
