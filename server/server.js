@@ -8,7 +8,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:3000",  // Adjust this to your client's origin
+        origin: "http://localhost:3000",  // Adjust this to your client’s origin
         methods: ["GET", "POST"]
     }
 });
@@ -29,7 +29,7 @@ io.on('connection', (socket) => {
         pythonProcess.stdin.write(data + '\n');
     });
 
-    // Handle processed frames (bounding boxes) from the Python process
+    // Handle processed frames (bounding boxes) from Python process
     pythonProcess.stdout.on('data', (data) => {
         const boxes = JSON.parse(data.toString().trim());
         socket.emit('processed_frame', boxes); // Send boxes to the frontend

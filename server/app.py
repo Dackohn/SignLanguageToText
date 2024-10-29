@@ -10,8 +10,8 @@ import json
 # Load YOLO model
 def load_yolo_model(cfg_path, weights_path):
     net = cv2.dnn.readNet(weights_path, cfg_path)
-    net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)  # Use OpenCV backend
-    net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)  # Use CPU
+    net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)  # Use CUDA if available
+    net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)  # Use CUDA if available
     return net
 
 # Detect hands using YOLO
@@ -46,8 +46,10 @@ def load_asl_model(weights_path, num_classes=27):
     model = models.mobilenet_v2(pretrained=True)  # Load pretrained weights
     model.classifier[1] = torch.nn.Linear(model.last_channel, num_classes)
     model.load_state_dict(torch.load(weights_path, map_location=torch.device('cpu')))
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
     model.eval()
-    return model
+    return model, device
 
 # Preprocess image for ASL model
 transform = transforms.Compose([
@@ -71,7 +73,7 @@ class_names = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", 
 
 # Load models
 yolo_net = load_yolo_model(cfg_path, weights_path_yolo)
-asl_model = load_asl_model(weights_path_asl)
+asl_model, device = load_asl_model(weights_path_asl)
 
 # Processing function for incoming frames
 def process_frame(frame_data):
@@ -102,7 +104,7 @@ def process_frame(frame_data):
             if cropped_frame.size == 0:
                 continue  # Skip if the cropped frame is empty
 
-            asl_input = preprocess_image(cropped_frame)
+            asl_input = preprocess_image(cropped_frame).to(device)
 
             # Predict ASL sign
             with torch.no_grad():

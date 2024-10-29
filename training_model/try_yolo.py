@@ -65,12 +65,14 @@ cfg_path = "D:/ASL_Alphabet_Dataset/Sign_language/cross-hands.cfg"
 weights_path_yolo = "D:/ASL_Alphabet_Dataset/Sign_language/cross-hands.weights"
 weights_path_asl = "D:/ASL_Alphabet_Dataset/Sign_language/SignLanguageToText/asl_to_text_model_74.pth"
 
-# Class labels
-class_names = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "space"]
 
 # Load models
 yolo_net = load_yolo_model(cfg_path, weights_path_yolo)
 asl_model, device = load_asl_model(weights_path_asl)
+
+# Capture video from webcam
+# Class labels
+class_names = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", " "]
 
 # Capture video from webcam
 cap = cv2.VideoCapture(0)
@@ -98,7 +100,13 @@ while True:
 
         # Draw bounding box and label on the frame
         label = class_names[predicted_class.item()]
-        print(label)  # Print detected letter to the terminal
+        
+        # Print detected letter to the terminal
+        if label == " ":
+            print("Detected: [space]")
+        else:
+            print(f"Detected: {label}")
+        
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
         cv2.putText(frame, f'{label} ({confidence:.2f})', (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
